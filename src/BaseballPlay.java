@@ -1,6 +1,4 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import javax.swing.JFrame;
 
 public class BaseballPlay extends BaseballGame {
   ArrayList<Integer> play_Num;   //게임을 실행한 횟수

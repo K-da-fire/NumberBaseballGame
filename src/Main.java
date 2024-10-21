@@ -2,12 +2,12 @@ import java.util.Scanner;
 
 public class Main {
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
     InputHandler inputHandler = new InputHandler(scanner);
-    int len = 0;
-    int[] input_Arr = new int[0];
-    int game_type = 0;
+    int len;
+    int[] input_Arr;
+    int game_type;
     BaseballPlay baseballGame = new BaseballPlay();
 
 
