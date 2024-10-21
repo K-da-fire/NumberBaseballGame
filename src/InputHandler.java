@@ -4,8 +4,8 @@ import java.util.regex.Pattern;
 public class InputHandler {
   Scanner scanner;
 
-  public InputHandler(Scanner scanner) {
-    this.scanner = scanner;
+  public InputHandler() {
+    this.scanner = new Scanner(System.in);
   }
 
   public int inputGameType() throws InputError{
@@ -20,9 +20,17 @@ public class InputHandler {
 
   public int InputNumberSize() throws InputError{
     System.out.print("설정하고자 한는 자리수를 입력하세요 : ");
-    int len = scanner.nextInt();
-    scanner.nextLine();
-    return len;
+    try {
+      int len = scanner.nextInt();
+      scanner.nextLine();
+      if(len < 3 || len > 5) {
+        throw new InputError();
+      }
+      System.out.println(len + "자리수 난이도로 설정되었습니다.");
+      return len;
+    }catch (Exception e) {
+      throw new InputError();
+    }
   }
 
   public int[] InputNumber(int len) throws InputError {
@@ -59,5 +67,8 @@ public class InputHandler {
     if((int) Math.log10(input_Num)+1 != len) {
       throw new InputError();
     }
+  }
+  public void closeScanner() {
+    scanner.close();
   }
 }
