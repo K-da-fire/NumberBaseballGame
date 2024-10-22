@@ -1,11 +1,30 @@
 import java.util.Scanner;
 import java.util.regex.Pattern;
+import Enum.Stage;
 
 public class InputHandler {
   Scanner scanner;
+  private Stage stage;
 
   public InputHandler() {
     this.scanner = new Scanner(System.in);
+  }
+
+  public void checkInput(){
+    /**
+     * stage값 또는 enum에 맞게 핸들러를 호출
+     *
+     * 이때 오류가 나면
+     * InputHandler -> BaseballPlay -> InpuHandler?
+     */
+    switch (this.stage) {
+      case StartGame:
+        break;
+      case SelectNumberSize:
+        break;
+      case InputNumber:
+        break;
+    }
   }
 
   public int inputGameType() throws InputError{
@@ -15,25 +34,28 @@ public class InputHandler {
     if(!input.equals("1") && !input.equals("2") && !input.equals("3")) {
       throw new InputError();
     }
+    System.out.println();
     return Integer.parseInt(input);
   }
 
-  public int InputNumberSize() throws InputError{
-    System.out.print("설정하고자 한는 자리수를 입력하세요 : ");
-    try {
-      int len = scanner.nextInt();
-      scanner.nextLine();
-      if(len < 3 || len > 5) {
+  public int inputNumberSize() throws InputError{
+    int len = 0;
+//    this.stage = Stage.SelectNumberSize;
+    System.out.print("설정하고자 하는 자리수를 입력하세요 : ");
+      try {
+//        String tmpLen = scanner.nextLine();
+        len = Integer.parseInt(scanner.nextLine());
+        if (len < 3 || len > 5) {
+          throw new InputError();
+        }
+      } catch (Exception e) {
         throw new InputError();
       }
-      System.out.println(len + "자리수 난이도로 설정되었습니다.");
-      return len;
-    }catch (Exception e) {
-      throw new InputError();
-    }
+    System.out.println(len + "자리수 난이도로 설정되었습니다.");
+    return len;
   }
 
-  public int[] InputNumber(int len) throws InputError {
+  public int[] inputNumber(int len) throws InputError {
     int[] input_Arr = new int[len];
     System.out.print("숫자를 입력하세요 : ");
     String str = scanner.nextLine();
