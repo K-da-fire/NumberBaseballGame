@@ -1,80 +1,92 @@
+import UserException.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import Enum.*;
 
-/**
- * 메서드는 하나에 한가지 일만
- * -> 쉬운함수 여러개
- *
- */
-
 public class BaseballPlay {
-  private ArrayList<Integer> answer;  //정답 배열
-  private final Random rand;                //랜덤값에 저장
+  private final ArrayList<Integer> answer;  //정답 배열
   private final InputHandler inputHandler;
   private final ArrayList<Integer> playNum;//게임을 실행한 횟수
-  private Set<Integer> set;
   private int countTry;                    //도전 횟수
   private int questionLen;
   private Stage stage;
   private PlayerStatus playerStatus;
+  private GameType gameType;
 
   public BaseballPlay() {
     answer = new ArrayList<>();
-    rand = new Random();
     inputHandler = new InputHandler();
     countTry = 0;
     playNum = new ArrayList<>();
-    set = new HashSet<>();
+    stage = Stage.StartGame;
+    gameType = GameType.StartProgram;
   }
 
-  public void gameHandler(){
-    /**
-     * 만약에 this.stage가 0이면 initGame startGame
-     * stage != 0 이면 loadGame
-     */
-//    loadGame();
-  }
-
-  public void loadGame() throws InputError{
+  public void playBaseBall(){
     boolean flag = false;
-    initGame();
     while(!flag) {
       try {
-        switch (this.stage) {
-          case StartGame:
-            startGame();
-            makeQuestion(this.questionLen);
+        switch (gameType) {    //게임실행
+          case GameType.StartProgram:
+            gameType = GameType.setGameType(inputHandler.inputGameType()); //UserException.GameTypeInputException
             break;
-          case SelectNumberSize:
-            nowGaming();
+          case GameType.PlayGame:
+            loadGame();                               //UserException.UserInputException, NumberFormatException
+            gameType = GameType.StartProgram;
             break;
-          case InputNumber:
+          case GameType.ShowTry:
+            showTry();
+            gameType = GameType.StartProgram;
+            break;
+          case GameType.EndGame:
+            inputHandler.closeScanner();
+            System.out.println("<숫자 야구 게임을 종료합니다>");
             flag = true;
-            break;
         }
-      }catch (InputError e) {
+      } catch (GameTypeInputException | DuplicateInputException | NumberInputException |
+               LenInputException e){
         System.out.println(e.getMessage());
+      } catch (NumberFormatException e) {
+        System.out.println("숫자를 입력해주세요\n");
+      } catch (Exception e) {
+        System.out.println("예기치않은 오류입니다.");
       }
     }
   }
-
+  public void loadGame() throws Exception {
+    boolean flag = false;
+    if(stage == Stage.EndGame)
+      stage = Stage.StartGame;
+    while (!flag) {
+      switch (this.stage) {
+        case StartGame:
+          startGame();
+          makeQuestion(this.questionLen);
+          break;
+        case NowGaming:
+          nowGaming();
+          break;
+        case EndGame:
+          flag = true;
+          break;
+        case EndProgram:
+          break;
+      }
+    }
+  }
   public void initGame()  {
     this.countTry = 0;
     this.questionLen = -1;
     this.answer.clear();
     this.stage = Stage.StartGame;
   }
-  public void startGame() throws InputError{
+  public void startGame() throws Exception{
+    initGame();
     System.out.println("< 게임을 시작합니다 >");
     this.questionLen = inputHandler.inputNumberSize();
-    this.stage = Stage.SelectNumberSize;    //사이즈 입력 성공적
+    this.stage = Stage.NowGaming;
   }
   private void makeQuestion(int questionLen) {
     List<Integer> arrList = Arrays.asList(1, 2, 3, 4, 5, 6, 7,8, 9);
@@ -88,23 +100,13 @@ public class BaseballPlay {
     System.out.println();
     /////////////////////////////////////////////////////////
   }
-
-  public void showTry(){
-    System.out.println("< 게임 기록 보기 >");
-    for(int i = 0;i< playNum.size();i++){
-      System.out.println(i+1 + "번째 게임 : 시도 횟수 - " + playNum.get(i));
-    }
-    System.out.println();
-  }
-
-  public void nowGaming() throws InputError {
-//    System.out.println("noGame");
+  public void nowGaming() throws Exception {
     int[] inputArr;
     boolean flag = false;
     while(!flag) {
-      this.stage = Stage.SelectNumberSize;
+      this.stage = Stage.NowGaming;
       inputArr = inputHandler.inputNumber(questionLen);
-      this.stage = Stage.InputNumber;   //답안 입력 성공적
+      this.stage = Stage.EndGame;   //답안 입력 성공적
       int strike = checkStrike(inputArr);
       int ball = checkBall(inputArr);
       countTry++;
@@ -113,17 +115,17 @@ public class BaseballPlay {
       System.out.println();
     }
   }
-
-  /**
-   * showResult
-   * 결과에 따라서 결과를 출력해주는 함수
-   * stage내에서 input -> checkAnswer -> showResult
-   */
-  /**
-   * 둘로 나눔
-   * 1. 업데이트 스테이터스
-   * 2. showResult
-   */
+  public void showTry(){
+    if(playNum.isEmpty()) {
+      System.out.println("게임을 시도한 적이 없습니다\n");
+      return;
+    }
+    System.out.println("< 게임 기록 보기 >");
+    for(int i = 0;i< playNum.size();i++){
+      System.out.println(i+1 + "번째 게임 : 시도 횟수 - " + playNum.get(i));
+    }
+    System.out.println();
+  }
   private boolean updateStatus(int strike, int ball, int inputLen){
     if (strike == 0 && ball == 0) {
       this.playerStatus = PlayerStatus.Out;

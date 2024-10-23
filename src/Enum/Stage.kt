@@ -2,6 +2,7 @@ package Enum
 
 enum class Stage {
     StartGame,
-    SelectNumberSize,
-    InputNumber
+    NowGaming,
+    EndGame,
+    EndProgram
 }
