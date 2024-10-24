@@ -20,8 +20,8 @@ public class BaseballPlay {
     inputHandler = new InputHandler();
     countTry = 0;
     playNum = new ArrayList<>();
-    stage = Stage.StartGame;
-    gameType = GameType.StartProgram;
+    stage = Stage.PLAY_GAME;
+    gameType = GameType.START_PROGRAM;
   }
 
   //게임 타입을 받아서 적절한 메서드를 실행하는 메서드
@@ -30,18 +30,18 @@ public class BaseballPlay {
     while(!flag) {
       try {
         switch (gameType) {    //게임실행
-          case GameType.StartProgram:
+          case GameType.START_PROGRAM:
             gameType = gameType.setGameType(inputHandler.inputGameType());
             break;
-          case GameType.PlayGame:
+          case GameType.START_GAME:
             loadGame();
-            gameType = GameType.StartProgram;
+            gameType = GameType.START_PROGRAM;
             break;
-          case GameType.ShowTry:
+          case GameType.SHOW_TRY:
             showTry();
-            gameType = GameType.StartProgram;
+            gameType = GameType.START_PROGRAM;
             break;
-          case GameType.EndGame:
+          case GameType.END_PROGRAM:
             inputHandler.closeScanner();
             System.out.println("<숫자 야구 게임을 종료합니다>");
             flag = true;
@@ -60,18 +60,18 @@ public class BaseballPlay {
   //게임을 시작했을 때 순서에 맞게 게임을 실행시켜주는 메서드
   public void loadGame() throws Exception {
     boolean flag = false;
-    if(stage == Stage.EndGame)
-      stage = Stage.StartGame;
+    if(stage == Stage.END_GAME)
+      stage = Stage.PLAY_GAME;
     while (!flag) {
       switch (this.stage) {
-        case StartGame:
+        case PLAY_GAME:
           startGame();
           makeQuestion(this.questionLen);
           break;
-        case NowGaming:
+        case NOW_GAME:
           nowGaming();
           break;
-        case EndGame:
+        case END_GAME:
           flag = true;
           break;
       }
@@ -83,7 +83,7 @@ public class BaseballPlay {
     this.countTry = 0;
     this.questionLen = -1;
     this.answer.clear();
-    this.stage = Stage.StartGame;
+    this.stage = Stage.PLAY_GAME;
   }
 
   //게임을 시작하는 메서드
@@ -91,7 +91,7 @@ public class BaseballPlay {
     initGame();
     System.out.println("< 게임을 시작합니다 >");
     this.questionLen = inputHandler.inputNumberSize();
-    this.stage = Stage.NowGaming;
+    this.stage = Stage.NOW_GAME;
   }
 
   //문제를 만들어주는 메서드
@@ -108,9 +108,9 @@ public class BaseballPlay {
     int[] inputArr;
     boolean flag = false;
     while(!flag) {
-      this.stage = Stage.NowGaming;
+      this.stage = Stage.NOW_GAME;
       inputArr = inputHandler.inputNumber(questionLen);
-      this.stage = Stage.EndGame;   //답안 입력 성공적
+      this.stage = Stage.END_GAME;   //답안 입력 성공적
       int strike = checkStrike(inputArr);
       int ball = checkBall(inputArr);
       countTry++;
@@ -136,13 +136,13 @@ public class BaseballPlay {
   //게임 결과 아웃인지, 정답인지, 스트라이크와 볼의 결과를 업데이트해주는 메서드
   private boolean updateStatus(int strike, int ball, int inputLen){
     if (strike == 0 && ball == 0) {
-      this.playerStatus = PlayerStatus.Out;
+      this.playerStatus = PlayerStatus.OUT;
     } else if (strike == inputLen) {
-      this.playerStatus = PlayerStatus.Win;
+      this.playerStatus = PlayerStatus.WIN;
       playNum.add(countTry);
       return true;
     }else {
-      this.playerStatus = PlayerStatus.Playing;
+      this.playerStatus = PlayerStatus.NOW_PLAYING;
     }
     return false;
   }
@@ -150,14 +150,14 @@ public class BaseballPlay {
   //업데이트된 게임 결과를 출력해주는 출력 메서드
   private void showResult(int strike, int ball){
     switch (playerStatus) {
-      case Out:
+      case OUT:
         System.out.print("아웃");
         break;
-      case Win:
+      case WIN:
         System.out.println(countTry + "회 시도");
         System.out.println("정답입니다!");
         break;
-      case Playing:
+      case NOW_PLAYING:
         if(strike != 0) System.out.print(strike + "스트라이크 ");
         if(ball != 0) System.out.print(ball + "볼");
         break;

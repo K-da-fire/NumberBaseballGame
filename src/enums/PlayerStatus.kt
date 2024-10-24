@@ -1,7 +1,7 @@
 package enums
 
 enum class PlayerStatus {
-    Out,    //아웃
-    Win,    //정답
-    Playing //스트라이크, 볼 출력
+    OUT,    //아웃
+    WIN,    //정답
+    NOW_PLAYING //스트라이크, 볼 출력
 }
