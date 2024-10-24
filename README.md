@@ -14,20 +14,24 @@
 
   ## 3. 주요구성
   ###BaseballPlay클래스
+  
     -게임의 정보를 저장하고, 게임을 실행하는 클래스
     -예외처리를 하는 메서드 구현
   
   ###InputHandler클래스
+  
     -입력값을 받는 클래스
     -입력값에 예외가 발생하면 발생한 예외에 맞는 메시지를 던져준다.
 
   ###enums패키지
+  
     -Stage : 게임 진행상황을 저장합니다.
     -PlayerStatus : 게임 결과를 저장합니다.
     -GameType : 선택한 게임타입을 저장합니다.
                 이때 GameType은 setGameType을 이용하여 인덱스에 맞는 enum을 반환합니다.
 
   ###exception패키지
+  
     -DuplicateInputException : 사용자가 중복값을 입력하면, 예외메시지를 출력해준다.
     -GameTypeInpputException : 옳바르지 않는 게임타입이 입력된다면 예외메시지를 출력해준다. (1 ~ 3이외의 입력)
     -LenInputException : 문제의 길이(난이도)가 잘못 입력되었을 때, 예외메시지를 출력해준다. (3 ~ 5이외의 입력)
