@@ -1,9 +1,9 @@
-import UserException.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import Enum.*;
+import exception.*;
+import enums.*;
 
 public class BaseballPlay {
   private final ArrayList<Integer> answer;  //정답 배열
@@ -24,16 +24,17 @@ public class BaseballPlay {
     gameType = GameType.StartProgram;
   }
 
+  //게임 타입을 받아서 적절한 메서드를 실행하는 메서드
   public void playBaseBall(){
     boolean flag = false;
     while(!flag) {
       try {
         switch (gameType) {    //게임실행
           case GameType.StartProgram:
-            gameType = GameType.setGameType(inputHandler.inputGameType()); //UserException.GameTypeInputException
+            gameType = gameType.setGameType(inputHandler.inputGameType());
             break;
           case GameType.PlayGame:
-            loadGame();                               //UserException.UserInputException, NumberFormatException
+            loadGame();
             gameType = GameType.StartProgram;
             break;
           case GameType.ShowTry:
@@ -55,6 +56,8 @@ public class BaseballPlay {
       }
     }
   }
+
+  //게임을 시작했을 때 순서에 맞게 게임을 실행시켜주는 메서드
   public void loadGame() throws Exception {
     boolean flag = false;
     if(stage == Stage.EndGame)
@@ -71,35 +74,36 @@ public class BaseballPlay {
         case EndGame:
           flag = true;
           break;
-        case EndProgram:
-          break;
       }
     }
   }
+
+  //게임을 시작하기 전에 정보를 초기화시켜주는 메서드
   public void initGame()  {
     this.countTry = 0;
     this.questionLen = -1;
     this.answer.clear();
     this.stage = Stage.StartGame;
   }
+
+  //게임을 시작하는 메서드
   public void startGame() throws Exception{
     initGame();
     System.out.println("< 게임을 시작합니다 >");
     this.questionLen = inputHandler.inputNumberSize();
     this.stage = Stage.NowGaming;
   }
+
+  //문제를 만들어주는 메서드
   private void makeQuestion(int questionLen) {
     List<Integer> arrList = Arrays.asList(1, 2, 3, 4, 5, 6, 7,8, 9);
     Collections.shuffle(arrList);
     for(int i = 0; i < questionLen; i++) {
       answer.add(arrList.get(i));
     }
-    //////////////////////////////////////////////////////////
-    answer.stream()
-        .forEach(System.out::print);
-    System.out.println();
-    /////////////////////////////////////////////////////////
   }
+
+  //유저에게 입력값을 받아 정답인지 확인하는 메서드
   public void nowGaming() throws Exception {
     int[] inputArr;
     boolean flag = false;
@@ -115,6 +119,8 @@ public class BaseballPlay {
       System.out.println();
     }
   }
+
+  //게임 기록을 출력한는 메서드
   public void showTry(){
     if(playNum.isEmpty()) {
       System.out.println("게임을 시도한 적이 없습니다\n");
@@ -126,6 +132,8 @@ public class BaseballPlay {
     }
     System.out.println();
   }
+
+  //게임 결과 아웃인지, 정답인지, 스트라이크와 볼의 결과를 업데이트해주는 메서드
   private boolean updateStatus(int strike, int ball, int inputLen){
     if (strike == 0 && ball == 0) {
       this.playerStatus = PlayerStatus.Out;
@@ -138,6 +146,8 @@ public class BaseballPlay {
     }
     return false;
   }
+
+  //업데이트된 게임 결과를 출력해주는 출력 메서드
   private void showResult(int strike, int ball){
     switch (playerStatus) {
       case Out:
@@ -153,6 +163,8 @@ public class BaseballPlay {
         break;
     }
   }
+
+  //스트라이크가 몇개인지 확인하는 메서드
   private int checkStrike(int[] inputArr){
     int count = 0;
     for(int i = 0; i < inputArr.length; i++){
@@ -160,6 +172,8 @@ public class BaseballPlay {
     }
     return count;
   }
+
+  //볼이 몇개인지 확인하는 메서드
   private int checkBall(int[] inputArr){
     int count = 0;
     for(int i = 0; i < inputArr.length; i++){

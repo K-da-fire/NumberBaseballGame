@@ -1,4 +1,4 @@
-package UserException;
+package exception;
 
 public class DuplicateInputException extends Exception {
   public DuplicateInputException() {

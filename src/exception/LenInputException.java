@@ -1,4 +1,4 @@
-package UserException;
+package exception;
 
 public class LenInputException extends Exception {
   public LenInputException() {

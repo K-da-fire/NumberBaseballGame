@@ -1,4 +1,4 @@
-package UserException;
+package exception;
 
 public class GameTypeInputException extends Exception {
   public GameTypeInputException() {
